@@ -376,3 +376,29 @@ printf "Setup Complete - Open a browser and go to: \\n\\n"
 printf "http://%s \\nOR http://%s If you have appropriate DNS configured.\\n\\n" "$locip" "$thishost"
 
 exit
+
+# === Mediabox modular compose (app selection) ===
+# Use --apps "plex,sonarr,radarr,prowlarr,delugevpn" or rely on prep/config.yml:apps
+APPS_ARG=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --apps) APPS_ARG="$2"; shift 2;;
+    --apps=*) APPS_ARG="${1#*=}"; shift 1;;
+    *) break;;
+  esac
+done
+
+if [[ -n "$APPS_ARG" ]]; then
+  export APPS="$APPS_ARG"
+fi
+
+bash "$(dirname "$0")/scripts/generate-compose.sh"
+
+GEN_FILE="$(dirname "$0")/docker-compose.generated.yml"
+if [[ -f "$GEN_FILE" ]]; then
+  echo "Launching Mediabox with selected apps..."
+  docker compose -f "$GEN_FILE" up -d
+else
+  echo "Failed to find generated compose at $GEN_FILE" >&2
+  exit 1
+fi

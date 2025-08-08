@@ -1,0 +1,16 @@
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+      - VERSION=${PLEX_VERSION:-latest}
+    volumes:
+      - config:/config
+      - media:/media
+    ports:
+      - "32400:32400"
+    restart: unless-stopped

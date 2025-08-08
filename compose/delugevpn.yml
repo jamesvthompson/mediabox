@@ -1,0 +1,26 @@
+services:
+  delugevpn:
+    image: binhex/arch-delugevpn
+    container_name: delugevpn
+    cap_add: [NET_ADMIN]
+    networks: [mediabox_net]
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=${VPN_USER}
+      - VPN_PASS=${VPN_PASS}
+      - VPN_PROV=${VPN_PROV:-pia}
+      - STRICT_PORT_FORWARD=${STRICT_PORT_FORWARD:-yes}
+      - ENABLE_PRIVOXY=yes
+      - UMASK=002
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/deluge
+      - downloads:/data
+    ports:
+      - "8112:8112"
+      - "8118:8118"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped

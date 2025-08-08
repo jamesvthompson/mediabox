@@ -1,0 +1,21 @@
+name: mediabox
+
+networks:
+  mediabox_net:
+    driver: bridge
+
+volumes:
+  config:
+  downloads:
+  media:
+
+services:
+  homer:
+    image: b4bz/homer
+    container_name: homer
+    restart: unless-stopped
+    networks: [mediabox_net]
+    ports:
+      - "8080:8080"
+    volumes:
+      - config:/www/assets

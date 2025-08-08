@@ -261,3 +261,11 @@ services:
         target: "_blank"
 
 
+
+# === App selection (all enabled by default) ===
+apps:
+  plex: true
+  sonarr: true
+  radarr: true
+  prowlarr: true
+  delugevpn: true
