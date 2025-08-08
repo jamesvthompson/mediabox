@@ -57,7 +57,7 @@ For simplicity's sake (eg. automatic dependency management), the method used to 
 (You'll need superuser access to run these commands successfully)
 
 
-## Installation (Ubuntu 24.04.2 LTS)
+## Installation (Ubuntu 24.04.3 LTS)
 
 ### 1) Update and upgrade packages
 ```bash
