@@ -1,0 +1,18 @@
+services:
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:2.20.04
+    container_name: tdarr
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/app/configs
+      - config:/app/server
+      - media:/media
+      - downloads:/downloads
+    ports:
+      - "8265:8265"
+      - "8266:8266"
+    restart: unless-stopped

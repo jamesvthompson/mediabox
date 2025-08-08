@@ -1,0 +1,15 @@
+services:
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/sabnzbd
+      - downloads:/downloads
+    ports:
+      - "8081:8080"
+    restart: unless-stopped

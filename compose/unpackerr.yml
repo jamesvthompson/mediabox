@@ -1,0 +1,10 @@
+services:
+  unpackerr:
+    image: ghcr.io/unpackerr/unpackerr:latest
+    container_name: unpackerr
+    networks: [mediabox_net]
+    environment:
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - downloads:/downloads
+    restart: unless-stopped

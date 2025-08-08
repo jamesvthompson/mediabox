@@ -1,0 +1,15 @@
+services:
+  emby:
+    image: lscr.io/linuxserver/emby:latest
+    container_name: emby
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/emby
+      - media:/media
+    ports:
+      - "8097:8096"
+    restart: unless-stopped

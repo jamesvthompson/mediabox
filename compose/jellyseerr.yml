@@ -1,0 +1,13 @@
+services:
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    networks: [mediabox_net]
+    environment:
+      - TZ=${TZ:-America/Detroit}
+    user: "1000:1000"
+    volumes:
+      - config:/app/config
+    ports:
+      - "5056:5055"
+    restart: unless-stopped

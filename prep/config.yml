@@ -269,3 +269,16 @@ apps:
   radarr: true
   prowlarr: true
   delugevpn: true
+  jellyfin: false
+  emby: false
+  overseerr: false
+  jellyseerr: false
+  tautulli: false
+  sabnzbd: false
+  jackett: false
+  lidarr: false
+  bazarr: false
+  readarr: false
+  qbittorrentvpn: false
+  unpackerr: false
+  tdarr: false

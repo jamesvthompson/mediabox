@@ -1,0 +1,14 @@
+services:
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    networks: [mediabox_net]
+    environment:
+      - LOG_LEVEL=info
+      - TZ=${TZ:-America/Detroit}
+    user: "1000:1000"
+    volumes:
+      - config:/app/config
+    ports:
+      - "5055:5055"
+    restart: unless-stopped

@@ -1,0 +1,15 @@
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/jackett
+      - downloads:/downloads
+    ports:
+      - "9117:9117"
+    restart: unless-stopped

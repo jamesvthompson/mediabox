@@ -1,0 +1,16 @@
+services:
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    networks: [mediabox_net]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/lidarr
+      - downloads:/downloads
+      - media:/media
+    ports:
+      - "8686:8686"
+    restart: unless-stopped

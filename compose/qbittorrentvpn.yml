@@ -1,0 +1,25 @@
+services:
+  qbittorrentvpn:
+    image: ghcr.io/wfg/docker-qbittorrentvpn:latest
+    container_name: qbittorrentvpn
+    cap_add: [NET_ADMIN]
+    networks: [mediabox_net]
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=${VPN_USER}
+      - VPN_PASS=${VPN_PASS}
+      - VPN_PROV=${VPN_PROV:-pia}
+      - STRICT_PORT_FORWARD=${STRICT_PORT_FORWARD:-yes}
+      - PUID=1000
+      - PGID=1000
+      - WEBUI_PORT=8082
+      - TZ=${TZ:-America/Detroit}
+    volumes:
+      - config:/config/qbittorrent
+      - downloads:/downloads
+    ports:
+      - "8082:8082"     # web ui
+      - "8119:8118"     # optional privoxy if image supports
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
