@@ -71,7 +71,7 @@ if [ -e 1.env ]; then
     mv 1.env .env
     # Stop the current Mediabox stack
     printf "\\n\\nStopping Current Mediabox containers.\\n\\n"
-    docker-compose stop
+    docker compose stop
     # Make a datestampted copy of the existing .env file
     mv .env "$(date +"%Y-%m-%d_%H:%M").env"
 fi
@@ -235,7 +235,7 @@ cat << EOF > .env
 ###  M E D I A B O X   C O N F I G   S E T T I N G S
 ###  ------------------------------------------------
 ###  The values configured here are applied during
-###  $ docker-compose up
+###  $ docker compose up
 ###  -----------------------------------------------
 ###  DOCKER-COMPOSE ENVIRONMENT VARIABLES BEGIN HERE
 ###  -----------------------------------------------
@@ -290,7 +290,7 @@ echo "The containers will now be pulled and launched"
 echo "This may take a while depending on your download speed"
 read -r -p "Press any key to continue... " -n1 -s
 printf "\\n\\n"
-docker-compose up -d --remove-orphans
+docker compose up -d --remove-orphans
 printf "\\n\\n"
 
 # Configure the access to the Deluge Daemon
