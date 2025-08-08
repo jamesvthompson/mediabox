@@ -8,18 +8,18 @@ fi
 
 # See if we need to check GIT for updates
 if [ -e .env ]; then
-    # Check for Updated Docker-Compose
-    printf "Checking for update to Docker-Compose (If needed - You will be prompted for SUDO credentials).\\n\\n"
+    # Check for Updated docker compose
+    printf "Checking for update to docker compose (If needed - You will be prompted for SUDO credentials).\\n\\n"
     onlinever=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "tag_name" | cut -d ":" -f2 | sed 's/"//g' | sed 's/,//g' | sed 's/ //g')
     printf "Current online version is: %s \\n" "$onlinever"
-    localver=$(docker-compose -v | cut -d " " -f4 | sed 's/,//g')
+    localver=$(docker compose -v | cut -d " " -f4 | sed 's/,//g')
     printf "Current local version is: %s \\n" "$localver"
     if [ "$localver" != "$onlinever" ]; then
         sudo curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url" | grep -i -m1 "$(uname -s)"-"$(uname -m)" | cut -d '"' -f4 | xargs sudo curl -L -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
         printf "\\n\\n"
     else
-        printf "No Docker-Compose Update needed.\\n\\n"
+        printf "No docker compose Update needed.\\n\\n"
     fi
     # Check for updates to the Mediabox repo
     printf "Updating your local copy of Mediabox.\\n\\n"
@@ -237,7 +237,7 @@ cat << EOF > .env
 ###  The values configured here are applied during
 ###  $ docker compose up
 ###  -----------------------------------------------
-###  DOCKER-COMPOSE ENVIRONMENT VARIABLES BEGIN HERE
+###  docker compose ENVIRONMENT VARIABLES BEGIN HERE
 ###  -----------------------------------------------
 ###
 EOF
