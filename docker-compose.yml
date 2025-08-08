@@ -500,7 +500,7 @@ services:
   # SICKCHILL
   # ----------------------------------------
   sickchill:
-    image: lscr.io/linuxserver/sickchill
+    image: ghcr.io/linuxserver/sickchill:latest
     container_name: sickchill
     restart: unless-stopped
     network_mode: "bridge"
