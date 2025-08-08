@@ -263,6 +263,23 @@ services:
         - '/etc/localtime:/etc/localtime:ro'
 
   # ----------------------------------------
+  # MAINTAINERR
+  # ----------------------------------------
+  maintainerr:
+    image: jorenn92/maintainerr:latest
+    container_name: maintainerr
+    user: 1000:1000
+    volumes:
+      - ./maintainerr/data:/data
+    # environment:
+    #   - DEBUG=true       # optional
+    #   - UI_PORT=6247     # optional (default 6246)
+    #   - API_PORT=3002    # optional (default 3001)
+    ports:
+      - "6246:6246"
+    restart: unless-stopped
+    
+  # ----------------------------------------
   # METUBE
   # ----------------------------------------
   metube:
