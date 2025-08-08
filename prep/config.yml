@@ -146,7 +146,7 @@ services:
         target: "_blank"
       - name: "Maintainerr"
         logo: "assets/icons/maintainerr.png"
-        tag: "get"
+        tag: "manage"
         tagstyle: "is -info"
         url: "http://locip:6246"
         target: "_blank"
@@ -259,4 +259,5 @@ services:
         url: "http://locip:32400/web"
 
         target: "_blank"
+
 
