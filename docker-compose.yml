@@ -395,7 +395,7 @@ services:
   # ----------------------------------------
   plex:
     container_name: plex
-    image: plexinc/pms-docker:${PMSTAG}
+    image: plexinc/pms-docker:${PMSTAG:-public}
     restart: unless-stopped
     network_mode: "bridge"
     ports:
@@ -500,7 +500,7 @@ services:
   # SICKCHILL
   # ----------------------------------------
   sickchill:
-    image: ghcr.io/linuxserver/sickchill:latest
+    image: lscr.io/linuxserver/sickchill:2024.3.1-ls259
     container_name: sickchill
     restart: unless-stopped
     network_mode: "bridge"
