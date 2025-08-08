@@ -155,7 +155,7 @@ services:
   # GLANCES
   # ----------------------------------------
   glances:
-    image: nicolargo/glances:ubuntu-latest
+    image: nicolargo/glances:latest-full
     container_name: glances
     restart: unless-stopped
     network_mode: "bridge"
