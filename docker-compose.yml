@@ -155,7 +155,7 @@ services:
   # GLANCES
   # ----------------------------------------
   glances:
-    image: nicolargo/glances:latest-alpine
+    image: nicolargo/glances:latest
     container_name: glances
     restart: unless-stopped
     network_mode: "bridge"
