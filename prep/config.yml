@@ -75,6 +75,12 @@ services:
         tagstyle: "is -info"
         url: "http://locip:9117"
         target: "_blank"
+      - name: "Maintainerr"
+        logo: "assets/icons/maintainerr.png"
+        tag: "get"
+        tagstyle: "is -info"
+        url: "http://locip:6246"
+        target: "_blank"
       - name: "Metube"
         logo: "assets/icons/youtubedl.png"
         tag: "get"
@@ -251,4 +257,5 @@ services:
         tag: "watch"
         tagstyle: "is-success"
         url: "http://locip:32400/web"
+
         target: "_blank"
