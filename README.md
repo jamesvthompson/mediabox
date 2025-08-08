@@ -56,48 +56,83 @@ For simplicity's sake (eg. automatic dependency management), the method used to 
 
 (You'll need superuser access to run these commands successfully)
 
-Start by updating and upgrading our current packages:
 
-`$ sudo apt update && sudo apt full-upgrade`
+## Installation (Ubuntu 24.04.2 LTS)
 
-Install the prerequisite packages:
+### 1) Update and upgrade packages
+```bash
+sudo apt update && sudo apt full-upgrade
+```
 
-`$ sudo apt install curl git bridge-utils`
+### 2) Install prerequisites
+```bash
+sudo apt install -y curl git bridge-utils whiptail
+```
 
-**Note** - Mediabox uses Docker CE as the default Docker version - if you skip this and run with older/other Docker versions you may have issues.
+### 3) Remove old Docker (OK if nothing to remove)
+```bash
+sudo apt remove -y docker docker-engine docker.io containerd runc
+sudo snap remove docker
+```
 
-1. Uninstall old versions - It’s OK if apt and/or snap report that none of these packages are installed.  
-    `$ sudo apt remove docker docker-engine docker.io containerd runc`  
-    `$ sudo snap remove docker`  
+### 4) Install Docker CE (official method)
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-2. Install Docker CE:  
-    `$ curl -fsSL https://get.docker.com -o get-docker.sh`  
-    `$ sudo sh get-docker.sh`  
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-3. Install Docker-Compose:  
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
 
-    ```bash
-    sudo curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url" | grep -i -m1 `uname -s`-`uname -m` | cut -d '"' -f4 | xargs sudo curl -L -o /usr/local/bin/docker-compose
-    ```
+Verify:
+```bash
+docker --version
+docker compose version
+```
 
-4. Set the permissions: `$ sudo chmod +x /usr/local/bin/docker-compose`  
+### 5) Add your user to the docker group
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
 
-5. Verify the Docker Compose installation: `$ docker-compose -v`  
+### 6) DelugeVPN kernel module
+```bash
+sudo /sbin/modprobe iptable_mangle
+echo iptable_mangle | sudo tee -a /etc/modules
+```
 
-Add the current user to the docker group:
+### 7) Reboot (recommended if Docker group just added)
+```bash
+sudo reboot
+```
 
-`$ sudo usermod -aG docker $USER`
+### 8) Clone Mediabox
+```bash
+git clone https://github.com/jamesvthompson/mediabox.git
+cd mediabox
+```
 
-Adjustments for the the DelugeVPN container
+### 9) Configure & Deploy
+```bash
+# Run the Mediabox setup script (collects .env and prepares compose)
+./mediabox.sh
 
-`$ sudo /sbin/modprobe iptable_mangle`
+# Start or update the stack with Docker Compose v2
+# --remove-orphans cleans up containers no longer defined in the compose file
+docker compose up -d --remove-orphans
+```
 
-`$ sudo bash -c "echo iptable_mangle >> /etc/modules"`
-
-Reboot your machine manually, or using the command line:
-
-`$ sudo reboot`
-
+### Notes
+- **Plex tag:** set `PMSTAG` in `.env` (e.g., `public` or `plexpass`). Example image:
+  `image: plexinc/pms-docker:${PMSTAG:-public}`
+- If you change image tags, test them directly first:
+  
 ## Using mediabox
 
 Once the prerequisites are all taken care of you can move forward with using mediabox.
