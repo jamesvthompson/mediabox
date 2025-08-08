@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
+# === generate-compose.sh (enhanced) ===
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_DIR="$ROOT_DIR/compose"
-OUT="$ROOT_DIR/docker-compose.generated.yml"
+OUT="${OUT:-$ROOT_DIR/docker-compose.generated.yml}"
+CONFIG_YML="$ROOT_DIR/prep/config.yml"
 
 APPS_CSV="${APPS:-}"   # comma/space/semicolon list
-CONFIG_YML="$ROOT_DIR/prep/config.yml"
+DRY_RUN="${DRY_RUN:-0}"
 
 # Normalize delimiter to spaces
 APPS_NORMALIZED="$(echo "$APPS_CSV" | tr ',;' '  ' | xargs || true)"
@@ -37,16 +38,32 @@ for app in $APPS_NORMALIZED; do
   fi
 done
 
+# Merge/emit
 if command -v yq >/dev/null 2>&1; then
-  yq eval-all 'reduce .[] as $item ({}; . * $item)' "${files[@]}" > "$OUT"
+  if [[ "$DRY_RUN" = "1" ]]; then
+    yq eval-all 'reduce .[] as $item ({}; . * $item)' "${files[@]}"
+  else
+    yq eval-all 'reduce .[] as $item ({}; . * $item)' "${files[@]}" > "$OUT"
+    echo "Wrote $OUT"
+  fi
 else
-  {
-    echo "# GENERATED; do not edit"
-    for f in "${files[@]}"; do
-      echo -e "\n# === $f ==="
-      cat "$f"
-    done
-  } > "$OUT"
+  # Fallback: literal concat (valid if keys do not collide)
+  if [[ "$DRY_RUN" = "1" ]]; then
+    {
+      echo "# GENERATED (concat); install yq for clean merge"
+      for f in "${files[@]}"; do
+        echo -e "\n# === $f ==="
+        cat "$f"
+      done
+    }
+  else
+    {
+      echo "# GENERATED; do not edit"
+      for f in "${files[@]}"; do
+        echo -e "\n# === $f ==="
+        cat "$f"
+      done
+    } > "$OUT"
+    echo "Wrote $OUT"
+  fi
 fi
-
-echo "Wrote $OUT"
