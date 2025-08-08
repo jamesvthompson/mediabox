@@ -412,7 +412,7 @@ services:
   # ----------------------------------------
   plex:
     container_name: plex
-    image: plexinc/pms-docker:${PMSTAG:-public}
+    image: plexinc/pms-docker:${PMSTAG}
     restart: unless-stopped
     network_mode: "bridge"
     ports:
