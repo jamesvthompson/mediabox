@@ -168,3 +168,43 @@ if (( MBX_DRY_RUN )); then
   exit 0
 fi
 ### MBX FLAGS END
+### MBX REQUIREMENTS BEGIN
+mbx_selected_apps(){
+  if [[ -n "${APPS:-}" ]]; then echo "$APPS" | tr ",;" "  " | xargs; else mbx_enabled_apps | xargs; fi
+}
+
+# Require: one download client, one manager, one player
+mbx_check_requirements(){
+  local ok_dl=0 ok_mgr=0 ok_player=0
+  local sel; sel="$(mbx_selected_apps)"
+  # groups
+  local DL="delugevpn qbittorrentvpn sabnzbd"
+  local MGR="radarr sonarr lidarr headphones"
+  local PLAYER="plex emby jellyfin"
+  for a in $sel; do
+    for d in $DL; do [[ "$a" == "$d" ]] && ok_dl=1; done
+    for m in $MGR; do [[ "$a" == "$m" ]] && ok_mgr=1; done
+    for p in $PLAYER; do [[ "$a" == "$p" ]] && ok_player=1; done
+  done
+  local err=0
+  if (( ! ok_dl )); then
+    echo "❌ Selection missing a download client (choose one: delugevpn | qbittorrentvpn | sabnzbd)" >&2; err=1
+  fi
+  if (( ! ok_mgr )); then
+    echo "❌ Selection missing a manager (choose one: radarr | sonarr | lidarr | headphones)" >&2; err=1
+  fi
+  if (( ! ok_player )); then
+    echo "❌ Selection missing a player (choose one: plex | emby | jellyfin)" >&2; err=1
+  fi
+  if (( err )); then
+    echo "Tip: use --interactive to toggle, or pass --apps \"plex sonarr delugevpn\"" >&2
+    return 1
+  fi
+  return 0
+}
+
+# Run requirement check unless we are only listing apps
+if (( MBX_DO_LIST==0 )); then
+  mbx_check_requirements || exit 1
+fi
+### MBX REQUIREMENTS END
