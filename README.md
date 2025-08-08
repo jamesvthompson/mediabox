@@ -18,6 +18,7 @@ Components include:
 * [Jackett Tracker API and Proxy](https://github.com/Jackett/Jackett)
 * [Jellyfin Free Software Media System](https://github.com/jellyfin/jellyfin)
 * [Lidarr Music collection manager](https://lidarr.audio/)
+* [Maintainerr library management system](https://maintainerr.info/)
 * [MeTube Web GUI for youtube-dl](https://github.com/alexta69/metube)
 * [Minio cloud storage](https://www.minio.io/)
 * [NetData System Monitoring](https://github.com/netdata/netdata)
@@ -55,7 +56,6 @@ For simplicity's sake (eg. automatic dependency management), the method used to 
 ### Installation
 
 (You'll need superuser access to run these commands successfully)
-
 
 ## Installation (Ubuntu 24.04.3 LTS)
 
