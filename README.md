@@ -125,10 +125,6 @@ cd mediabox
 ```bash
 # Run the Mediabox setup script (collects .env and prepares compose)
 ./mediabox.sh
-
-# Start or update the stack with Docker Compose v2
-# --remove-orphans cleans up containers no longer defined in the compose file
-docker compose up -d --remove-orphans
 ```
 
 ### Notes
