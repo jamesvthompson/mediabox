@@ -42,7 +42,7 @@ Components include:
 
 ## Prerequisites
 
-* [Ubuntu 18.04 LTS](https://www.ubuntu.com/) Or [Ubuntu 20.04 LTS](https://www.ubuntu.com/)
+* [Ubuntu 24.04 LTS](https://www.ubuntu.com/)
 * [VPN account from Private internet Access](https://www.privateinternetaccess.com/) (Please see [binhex's Github Repo](https://github.com/binhex/arch-delugevpn) if you want to use a different VPN)
 * [Git](https://git-scm.com/)
 * [Docker](https://www.docker.com/)
@@ -111,6 +111,9 @@ echo iptable_mangle | sudo tee -a /etc/modules
 ```bash
 sudo reboot
 ```
+## Using mediabox
+
+Once the prerequisites are all taken care of you can move forward with using mediabox.
 
 ### 8) Clone Mediabox
 ```bash
@@ -134,16 +137,6 @@ docker compose up -d --remove-orphans
 - If you change image tags, test them directly first:
   
 ## Using mediabox
-
-Once the prerequisites are all taken care of you can move forward with using mediabox.
-
-1. Clone the mediabox repository: `$ git clone https://github.com/jamesvthompson/mediabox.git`
-
-2. Change directory into mediabox: `$ cd mediabox/`
-
-3. Run the mediabox.sh script: `$ ./mediabox.sh`  (**See below for the script questions**)
-
-4. To upgrade Mediabox at anytime, re-run the mediabox script: `$ ./mediabox.sh`
 
 ### Please be prepared to supply the following details after you run Step 3 above
 
