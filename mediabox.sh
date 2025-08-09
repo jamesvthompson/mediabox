@@ -208,3 +208,29 @@ if (( MBX_DO_LIST==0 )); then
   mbx_check_requirements || exit 1
 fi
 ### MBX REQUIREMENTS END
+
+# === Always proceed to generation/launch unless --dry-run or --no-launch ===
+if (( MBX_DRY_RUN )); then
+  DRY_RUN=1 APPS="${APPS:-}" bash "$MBX_ROOT/scripts/generate-compose.sh"
+  exit 0
+fi
+
+if (( MBX_NO_LAUNCH )); then
+  DRY_RUN=0 OUT="$MBX_ROOT/docker-compose.generated.yml" APPS="${APPS:-}" bash "$MBX_ROOT/scripts/generate-compose.sh"
+  echo "Skipping launch (--no-launch)."
+  exit 0
+fi
+
+# Generate compose and launch
+DRY_RUN=0 OUT="$MBX_ROOT/docker-compose.generated.yml" APPS="${APPS:-}" bash "$MBX_ROOT/scripts/generate-compose.sh"
+
+GEN_FILE="$MBX_ROOT/docker-compose.generated.yml"
+if [[ -f "$GEN_FILE" ]]; then
+  echo "Launching Mediabox with selected apps..."
+  docker compose -f "$GEN_FILE" up -d
+else
+  echo "Failed to find generated compose at $GEN_FILE" >&2
+  exit 1
+fi
+
+
