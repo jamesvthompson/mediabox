@@ -8,6 +8,53 @@
 ## 🚀 Quick Start
 
 ```bash
+git clone -b testing https://github.com/jamesvthompson/mediabox.git
+cd mediabox
+./mediabox.sh --interactive
+```
+
+The interactive menu lets you toggle apps before launching.  
+Your choices are saved in `prep/config.yml` under `apps:`.
+
+---
+
+## 📥 Git Instructions
+
+If you’ve already cloned the repo and want to switch to the testing branch:
+
+```bash
+git fetch origin
+git checkout testing
+git pull
+```
+
+If you want both **stable** and **testing** available locally:
+
+```bash
+# Clone stable (main branch)
+git clone https://github.com/jamesvthompson/mediabox.git
+cd mediabox
+
+# Add testing branch
+git fetch origin testing
+git checkout testing
+```
+
+**Important:**  
+The `testing` branch may contain breaking changes or incomplete features.  
+Only use it if you are intentionally testing new functionality.
+
+---
+# Mediabox (Testing Branch – Modular Compose)
+> **This branch contains the new modular compose system** with per-app fragments, a dynamic `docker-compose.generated.yml`, and enhanced `mediabox.sh` flags.
+
+**Repo URL:** [https://github.com/jamesvthompson/mediabox/tree/testing](https://github.com/jamesvthompson/mediabox/tree/testing)
+
+---
+
+## 🚀 Quick Start
+
+```bash
 git checkout testing
 ./mediabox.sh --interactive
 ```
