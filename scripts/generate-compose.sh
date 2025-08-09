@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# === generate-compose.sh (enhanced) ===
+# === generate-compose.sh (merged services fallback) ===
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_DIR="$ROOT_DIR/compose"
 OUT="${OUT:-$ROOT_DIR/docker-compose.generated.yml}"
@@ -9,10 +9,10 @@ CONFIG_YML="$ROOT_DIR/prep/config.yml"
 APPS_CSV="${APPS:-}"   # comma/space/semicolon list
 DRY_RUN="${DRY_RUN:-0}"
 
-# Normalize delimiter to spaces
-APPS_NORMALIZED="$(echo "$APPS_CSV" | tr ',;' '  ' | xargs || true)"
+norm_list(){ echo "$*" | tr ',;' '  ' | xargs || true; }
 
-# If no APPS provided, read from config.yml
+# Resolve app list
+APPS_NORMALIZED="$(norm_list "$APPS_CSV")"
 if [[ -z "$APPS_NORMALIZED" ]]; then
   if command -v yq >/dev/null 2>&1; then
     APPS_NORMALIZED="$(yq '.apps | to_entries | map(select(.value==true)) | .[].key' "$CONFIG_YML" | xargs || true)"
@@ -21,49 +21,63 @@ if [[ -z "$APPS_NORMALIZED" ]]; then
       | grep -E ':[[:space:]]*true' | cut -d: -f1 | xargs || true)"
   fi
 fi
+[[ -z "$APPS_NORMALIZED" ]] && { echo "No apps selected."; exit 1; }
 
-if [[ -z "$APPS_NORMALIZED" ]]; then
-  echo "No apps selected. Set APPS env (e.g. APPS=\"plex,sonarr,radarr\") or enable apps in prep/config.yml under 'apps:'."
-  exit 1
-fi
-
-declare -a files
+# Build list of files: base + each app fragment
 files=("$COMPOSE_DIR/base.yml")
 for app in $APPS_NORMALIZED; do
   f="$COMPOSE_DIR/${app}.yml"
-  if [[ -f "$f" ]]; then
-    files+=("$f")
-  else
-    echo "Warning: no compose fragment for app '$app' ($f missing), skipping." >&2
-  fi
+  if [[ -f "$f" ]]; then files+=("$f"); else echo "Warning: missing fragment: $f" >&2; fi
 done
 
-# Merge/emit
+# If yq exists, do a proper deep merge
 if command -v yq >/dev/null 2>&1; then
   if [[ "$DRY_RUN" = "1" ]]; then
     yq eval-all 'reduce .[] as $item ({}; . * $item)' "${files[@]}"
+    exit 0
   else
     yq eval-all 'reduce .[] as $item ({}; . * $item)' "${files[@]}" > "$OUT"
     echo "Wrote $OUT"
+    exit 0
   fi
+fi
+
+# Fallback: manual merge
+# Strategy:
+#  1) Start from base.yml verbatim
+#  2) Append ALL service entries from each fragment WITHOUT repeating "services:" header
+# Assumptions: fragments only define under "services:" top-level
+
+# Load base into a temp and ensure it has a top-level 'services:' key
+tmp="$(mktemp)"
+cat "$COMPOSE_DIR/base.yml" > "$tmp"
+
+# Check if base has a 'services:' key; if not, append it
+if ! grep -qE '^[[:space:]]*services:[[:space:]]*$' "$tmp"; then
+  printf "\nservices:\n" >> "$tmp"
+fi
+
+# Function: append services from a fragment (strip first 'services:' line)
+append_fragment_services () {
+  local frag="$1"
+  # Print everything AFTER the first 'services:' line
+  awk '
+    BEGIN{found=0}
+    /^[[:space:]]*services:[[:space:]]*$/ {found=1; next}
+    { if(found) print }
+  ' "$frag" >> "$tmp"
+}
+
+# Append each fragment's service entries
+for f in "${files[@]:1}"; do
+  append_fragment_services "$f"
+done
+
+if [[ "$DRY_RUN" = "1" ]]; then
+  cat "$tmp"
+  rm -f "$tmp"
+  exit 0
 else
-  # Fallback: literal concat (valid if keys do not collide)
-  if [[ "$DRY_RUN" = "1" ]]; then
-    {
-      echo "# GENERATED (concat); install yq for clean merge"
-      for f in "${files[@]}"; do
-        echo -e "\n# === $f ==="
-        cat "$f"
-      done
-    }
-  else
-    {
-      echo "# GENERATED; do not edit"
-      for f in "${files[@]}"; do
-        echo -e "\n# === $f ==="
-        cat "$f"
-      done
-    } > "$OUT"
-    echo "Wrote $OUT"
-  fi
+  mv "$tmp" "$OUT"
+  echo "Wrote $OUT"
 fi
