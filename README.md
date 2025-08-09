@@ -1,3 +1,113 @@
+# Mediabox (Testing Branch – Modular Compose)
+> **This branch contains the new modular compose system** with per-app fragments, a dynamic `docker-compose.generated.yml`, and enhanced `mediabox.sh` flags.
+
+**Repo URL:** [https://github.com/jamesvthompson/mediabox/tree/testing](https://github.com/jamesvthompson/mediabox/tree/testing)
+
+---
+
+## 🚀 Quick Start
+
+```bash
+git checkout testing
+./mediabox.sh --interactive
+```
+
+The interactive menu lets you toggle apps before launching.  
+Your choices are saved in `prep/config.yml` under `apps:`.
+
+---
+
+## 🧩 Modular Compose
+
+Instead of one huge `docker-compose.yml`, apps now live in:
+```
+compose/base.yml        # always included
+compose/<app>.yml       # one per app/service
+```
+
+`./mediabox.sh` uses `scripts/generate-compose.sh` to combine only the enabled apps into:
+```
+docker-compose.generated.yml
+```
+
+---
+
+## ✅ Category Requirements
+
+Your selection **must** include:
+
+1. **One download client**  
+   - `delugevpn` \| `qbittorrentvpn` \| `sabnzbd`
+2. **One manager**  
+   - `radarr` \| `sonarr` \| `lidarr` \| `headphones`
+3. **One player**  
+   - `plex` \| `emby` \| `jellyfin`
+
+If any category is missing, the script will exit with a friendly error and tips.
+
+---
+
+## ⚙️ New Flags
+
+| Flag | Description |
+|------|-------------|
+| `--list-apps` | Show all available apps and which are enabled in `prep/config.yml`. |
+| `--enable <apps>` | Permanently enable apps in `prep/config.yml`. |
+| `--disable <apps>` | Permanently disable apps in `prep/config.yml`. |
+| `--interactive` | Menu to toggle apps before launch. Saves to `prep/config.yml`. |
+| `--dry-run` | Print the merged compose file to stdout, do not write or launch. |
+| `--no-launch` | Generate compose file but do not start containers. |
+| `--check-env` | Verify required environment variables (VPN creds, etc.). |
+| `--apps <list>` | Override enabled apps for this run only. Comma/space separated. |
+
+---
+
+## 💡 Examples
+
+Run interactively:
+```bash
+./mediabox.sh --interactive
+```
+
+Enable Overseerr and disable Plex permanently, but don’t launch:
+```bash
+./mediabox.sh --enable overseerr --disable plex --no-launch
+```
+
+Preview a stack with Plex, Sonarr, and DelugeVPN:
+```bash
+./mediabox.sh --apps "plex sonarr delugevpn" --dry-run
+```
+
+Launch using currently enabled apps:
+```bash
+./mediabox.sh
+```
+
+---
+
+## 📦 Adding a New App
+
+1. Create `compose/<app>.yml` with the service definition.  
+2. Add `app: true/false` under `apps:` in `prep/config.yml`.  
+3. Select via `--apps`, `--enable`, or `--interactive`.
+
+---
+
+## 🛠 Troubleshooting
+
+- **Missing VPN credentials?**  
+  Use `.env` in repo root or export vars:
+  ```bash
+  export VPN_USER=myuser
+  export VPN_PASS=mypass
+  ```
+
+- **Missing category requirement?**  
+  Add at least 1 from each: **download client**, **manager**, **player**.
+
+---
+
 # Mediabox
 
 Mediabox is an all Docker Container based media aggregator stack.
